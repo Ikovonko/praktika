@@ -123,3 +123,41 @@
 </div>
 
 <p id="logTarget"></p>
+
+<!-- input 1 touch gestures -->
+<div class="test-element">Drag me with one finger</div>
+<div class="test-element">Drag me with another finger</div>
+<div class="test-element">Drag me too</div>
+
+<p><small>Based on demo from <a href="https://www.quirksmode.org/m/tests/drag2.html">QuirksMode.org</a>.</small></p>
+
+<!-- input 2 copy paste -->
+
+<p class="heading">Use the forms below for programmatic clipboard access or invoke standard copy/cut/paste operations with your keyboard.</p>
+<section>
+  <label><input type="radio" name="api" value="sync"> Use older, synchronous API</label><br/>
+  <label><input type="radio" name="api" value="async" checked> Use newer, asynchronous API</label>
+</section>
+<section>
+  <h2>Cut/Paste Example</h2>
+  <p>
+    <textarea class="js-cuttextarea">Hello! Cut me programatically or maybe try pasting here.</textarea>
+  </p>
+
+  <p>
+    <button class="js-textareacutbtn">Cut text programatically</button>
+    <button class="js-textareapastebtn">Paste text programatically</button>
+  </p>
+</section>
+
+<section>
+  <h2>Copy Example</h2>
+  <p>Email me at <a class="js-emaillink" href="mailto:matt@example.co.uk">matt@example.co.uk</a></p>
+  <p>
+    <button class="js-emailcopybtn">Copy Email Address programatically</button>
+  </p>
+</section>
+
+<p id="logTarget"></p>
+
+<p><small>Demo based on <a href="https://googlechrome.github.io/samples/cut-and-copy/index.html" target="_blank" rel="noopener">Google Chrome examples</a>.</small></p>
