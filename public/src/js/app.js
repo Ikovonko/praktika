@@ -1,104 +1,47 @@
-var pwaCard = document.querySelector('#pwa');
-var pwaCardContent = pwaCard.querySelector('.card__content');
-var pwaCardDetails = pwaCard.querySelector('.card__details');
-var detailsShown = false;
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function() {
-      console.log('SW registered');
-    });
+// local notifications
+
+var $status = document.getElementById('status');
+
+if ('Notification' in window) {
+  $status.innerText = Notification.permission;
 }
 
-pwaCard.addEventListener('click', function (event) {
-  if (!detailsShown) {
-    detailsShown = true;
-    pwaCardContent.style.opacity = 0;
-    pwaCardDetails.style.display = 'block';
-    pwaCardContent.style.display = 'none';
-    setTimeout(function () {
-      pwaCardDetails.style.opacity = 1;
-    }, 300);
-  } else {
-    detailsShown = false;
-    pwaCardDetails.style.opacity = 0;
-    pwaCardContent.style.display = 'block';
-    pwaCardDetails.style.display = 'none';
-    setTimeout(function () {
-      pwaCardContent.style.opacity = 1;
-    }, 300);
-  }
-});
-
-//camera and microphone
-
-function getUserMedia(constraints) {
-  // if Promise-based API is available, use it
-  if (navigator.mediaDevices) {
-    return navigator.mediaDevices.getUserMedia(constraints);
-  }
-    
-  // otherwise try falling back to old, possibly prefixed API...
-  var legacyApi = navigator.getUserMedia || navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    
-  if (legacyApi) {
-    // ...and promisify it
-    return new Promise(function (resolve, reject) {
-      legacyApi.bind(navigator)(constraints, resolve, reject);
-    });
-  }
-}
-
-function getStream (type) {
-  if (!navigator.mediaDevices && !navigator.getUserMedia && !navigator.webkitGetUserMedia &&
-    !navigator.mozGetUserMedia && !navigator.msGetUserMedia) {
-    alert('User Media API not supported.');
+function requestPermission() {
+  if (!('Notification' in window)) {
+    alert('Notification API not supported!');
     return;
   }
-
-  var constraints = {};
-  constraints[type] = true;
   
-  getUserMedia(constraints)
-    .then(function (stream) {
-      var mediaControl = document.querySelector(type);
-      
-      if ('srcObject' in mediaControl) {
-        mediaControl.srcObject = stream;
-      } else if (navigator.mozGetUserMedia) {
-        mediaControl.mozSrcObject = stream;
-      } else {
-        mediaControl.src = (window.URL || window.webkitURL).createObjectURL(stream);
-      }
-      
-      mediaControl.play();
-    })
-    .catch(function (err) {
-      alert('Error: ' + err);
-    });
-  }
-
-  //geolocation
-
-  var target = document.getElementById('target');
-var watchId;
-
-function appendLocation(location, verb) {
-  verb = verb || 'updated';
-  var newLocation = document.createElement('p');
-  newLocation.innerHTML = 'Location ' + verb + ': ' + location.coords.latitude + ', ' + location.coords.longitude + '';
-  target.appendChild(newLocation);
-}
-
-if ('geolocation' in navigator) {
-  document.getElementById('askButton').addEventListener('click', function () {
-    navigator.geolocation.getCurrentPosition(function (location) {
-      appendLocation(location, 'fetched');
-    });
-    watchId = navigator.geolocation.watchPosition(appendLocation);
+  Notification.requestPermission(function (result) {
+    $status.innerText = result;
   });
-} else {
-  target.innerText = 'Geolocation API not supported.';
 }
 
+function nonPersistentNotification() {
+  if (!('Notification' in window)) {
+    alert('Notification API not supported!');
+    return;
+  }
+  
+  try {
+    var notification = new Notification("Hi there - non-persistent!");
+  } catch (err) {
+    alert('Notification API error: ' + err);
+  }
+}
+
+function persistentNotification() {
+  if (!('Notification' in window) || !('ServiceWorkerRegistration' in window)) {
+    alert('Persistent Notification API not supported!');
+    return;
+  }
+  
+  try {
+    navigator.serviceWorker.getRegistration()
+      .then((reg) => reg.showNotification("Hi there - persistent!"))
+      .catch((err) => alert('Service Worker registration error: ' + err));
+  } catch (err) {
+    alert('Notification API error: ' + err);
+  }
+}
